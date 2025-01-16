@@ -1,2685 +1,702 @@
-Main.c 
-int 
-main 
-(void) 
+/*Main.c */
+int main (void) 
 { 
-/* 
-SystemClockUpdate 
-() 
-updates 
-the 
-SystemFrequency 
-variable 
-*/ 
-SystemClockUpdate 
-() 
-; 
-UARTInit 
-(192000); 
-/* 
-baud 
-rate 
-setting 
-*/ 
-SysTick_Config 
-(SystemFrequency 
-/ 
-1000000) 
-: 
-LPC 
-PINCON->PINSEL4 
-&= 
-~ 
-(0xFFFF) 
-; 
-// 
-1111l112111l11111 
-LPC_GPI02->FIODIRO 
-|= 
-0xFF; 
-// 
-11111111 
-I 
-Init 
-LCD 
-pin 
-LPC 
-PINCON->PINMODE 
-0 
-&= 
-~(0xFF); 
-// 
-11111111 
-LPC 
-PINCON->PINSELO 
-&= 
-~(0xFFFFFF) 
-; 
-// 
-111111111l11l111l111l111 
-LPC 
-GPIO0->FIODIRL 
-|= 
-OxFF0; 
-// 
-11111l1l0000 
-LPC 
-PINCON->PINMODE 
-1 
-&= 
-~(OxFF); 
-// 
-11111111 
-LPC 
-PINCON->PINSEL1 
-&= 
-~ 
-(0xFFFFFFFF) 
-; 
-// 
-11111111111111111111111111111111 
-LPC 
-GPIO0->FIODIRH 
-&= 
-~(0x1F80) 
-; 
-1/ 
-1111110000000 
-lcd 
-init 
-() 
-; 
-lcd 
-print 
-("I 
-love 
-you!!!") 
-: 
-unsigned 
-char 
-right, 
-left, 
-forword, 
-backword; 
-unsigned 
-char 
-pht_right, 
-pht 
-left, 
-pht 
-forword, 
-pht 
-backword; 
-LED 
-RED 
-OFF; 
-LED 
-BLUE 
-OFF; 
-delay 
-us 
-(1000000); 
+/* SystemClockUpdate () updates the SystemFrequency variable */ 
+SystemClockUpdate (); 
+UARTInit (192000); /* baud rate setting */ 
+SysTick_Config (SystemFrequency/1000000); 
+
+LPC_PINCON->PINSEL4 &= ~ (0xFFFF); // 1111l112111l11111 
+LPC_GPI02->FIODIRO |= 0xFF; // 11111111 | Init LCD pin 
+
+LPC_PINCON->PINMODE0 &= ~(0xFF); // 11111111 
+LPC_PINCON->PINSELO &= ~(0xFFFFFF); // 111111111l11l111l111l111 
+LPC_GPIO0->FIODIRL |= OxFF0; // 11111l1l0000 
+
+LPC_PINCON->PINMODE1 &= ~(OxFF); // 11111111 
+LPC_PINCON->PINSEL1 &= ~ (0xFFFFFFFF); // 11111111111111111111111111111111 
+LPC_GPIO0->FIODIRH &= ~(0x1F80); // 1111110000000 
+
+lcd_init (); 
+lcd_print ("I love you!!!"); 
+
+unsigned char right, left, forword, backword; 
+unsigned char pht_right, pht_left, pht_forword, pht_backword; 
+
+LED_RED_OFF; 
+LED_BLUE_OFF; 
+
+delay us (1000000); 
+
 MOTORIEN1; 
 MOTOR2EN1; 
-:NNDN 
-DD5UnN 
-5.7 
-//init 
-neural 
-network 
-int 
-i; 
-£loat 
-a=0.1; 
-for(i=0; 
-i<4; 
-it+) 
-{ 
-neo 
-[i].w[0]=0; 
-neo 
-[i).w[1] 
-=0; 
-neo 
-[i].w[2] 
-=0; 
-neo 
-[i).w[3]=0; 
-neo 
-[i]. 
-ch=l; 
-neo 
-[i].y-0; 
-unsigned 
-int 
-slowdown 
-Delay 
-= 
-1000000; 
-int 
-counter 
-= 
-0; 
-while 
-(1) 
-{ 
-if 
-(UART3Count==0) 
-LPC 
-UART3->IER 
-= 
-IER 
-THRE 
-| 
-IER 
-RLS; 
-/* 
-Disable 
-RBR 
-*/ 
-if 
-(LPC 
-UART3->RBR=='L') 
-left=l; 
-else 
-if 
-(LPC 
-UART3->RBR== 
-'F') 
-84 
-)1n 
-39 
-TIDy 
 
-0; 
-0; 
-: 
-0; 
-1: 
-0; 
-else 
-if 
-(LPC 
-UART3->RBR=='R') 
-LPC 
-UART3->IER 
-= 
-IER 
-THRE 
-| 
-IER 
-RLS 
-| 
-IER 
-RBR; 
-/* 
-Re-enable 
-RBR 
-*/ 
-{ 
-forword=1; 
+//init neural network 
+int i; 
+£loat a=0.1; 
+for (i=0; i<4; i++) { 
+  neo[i].w[0]=0; 
+  neo[i].w[1] =0; 
+  neo[i].w[2] =0; 
+  neo[i].w[3]=0; 
+  neo[i].ch=l; 
+  neo[i].y=0;
+}
+
+unsigned int slowdownDelay = 1000000; 
+int counter = 0; 
+
+while (1) { 
+if (UART3Count==0) {
+  LPC_UART3->IER = IER THRE | IER RLS; 
+  /* Disable RBR */ 
+  if (LPC_UART3->RBR=='L') 
+    left=l; 
+  else if (LPC_UART3->RBR== 'F') 
+    forword=1; 
+  else if (LPC_UART3->RBR=='R') 
+    right = 'R' 
+  else if (LPC_UART3->RBR=='B')
+    backword=1;
+  LPC_UART3->IER = IER THRE | IER RLS | IER RBR; 
+  /* Re-enable RBR */ 
 } 
-else 
-if 
-(LPC 
-UART3->RBR=='B') 
-right 
-= 
-'R' 
-? 
-1 
-: 
-0; 
-left 
-= 
-'L' 
-? 
-1: 
-0; 
-forword 
-= 
-'F! 
-? 
-1 
-: 
-0; 
-backword 
-= 
-'B' 
-? 
-1 
-: 
-0; 
-else 
-right=1; 
-pht 
-right 
-= 
-( 
-(LPC 
-GPIO0->FIOPIN 
-& 
-(1 
-<< 
-25)) 
->> 
-25) 
-? 
-1: 
-pht 
-left 
-= 
-(LPC 
-GPIO0->FIOPIN 
-& 
-(1 
-<< 
-27) 
-) 
->> 
-27) 
-? 
-1 
-: 
-pht 
-forword 
-= 
-((LPC 
-GPIO0->FIOPIN 
-& 
-(1 
-<< 
-26)) 
->> 
-26) 
-? 
-1 
-pht 
-backword 
-= 
-((LPC 
-GPIO0->FIOPIN 
-& 
-(1 
-<< 
-28)) 
->>> 
-28) 
-? 
-if 
-(pht 
-right 
--= 
-0 
-|| 
-pht 
-_left 
--= 
-0 
-|| 
-pht 
-forword 
-== 
-0 
-|| 
-pht 
-backword 
-== 
-0) 
-backword=1; 
-// 
-Slowdown 
-LED 
-RED 
-ON; 
-LED 
-RED 
-OFF; 
-if 
-(slowdownDelay 
-== 
-0) 
-slowdownDelay.= 
-1000000; 
-int 
-x 
-[4] 
-, 
-c[4]; 
-x[0] 
-= 
-~pht 
-right; 
-x 
-[1] 
-= 
-~pht 
-left; 
-x 
-(2] 
-= 
-~pht 
-forword; 
-x 
-(3] 
-= 
-~pht 
-backword; 
-for 
-(i=0; 
-i<4;i++) 
-(d[i] 
--
-neo[i].y) 
-* 
-x[j]; 
-Neuron 
-(x, 
-i); 
-if 
-(learning 
-== 
-1) 
-int 
-j, 
-d 
-[4]: 
-d[0] 
-= 
-right; 
-d[1] 
-left; 
-d[2] 
-= 
-forword; 
-d[3) 
-= 
-backword; 
-for 
-(i=0; 
-i<4;i++) 
-for 
-(j=0;j<4;j++) 
+
+right = 'R' ? 1 : 0; 
+left = 'L' ? 1: 0; 
+forword = 'F' ? 1 : 0; 
+backword = 'B' ? 1 : 0; 
+
+pht_right = ( (LPC_GPIO0->FIOPIN & (1 << 25)) >> 25) ? 1: 0;
+pht_left = ( (LPC_GPIO0->FIOPIN & (1 << 27) ) >> 27) ? 1: 0;
+pht_forword = ((LPC_GPIO0->FIOPIN & (1 << 26)) >> 26) ? 1: 0;
+pht_backword = ((LPC_GPIO0->FIOPIN & (1 << 28)) >>> 28) ? 1: 0;
+if (pht_right == 0 || pht_left == 0 || pht_forword == 0 || pht_backword == 0){
+  LED_RED_ON; 
+}
+else
+  LED_RED_OFF; 
+
+// Slowdown 
+if (slowdownDelay == 0){
+slowdownDelay = 1000000; 
+int x [4], c[4]; 
+x[0] = ~pht_right; 
+x[1] = ~pht_left; 
+x[2] = ~pht_forword; 
+x[3] = ~pht_backword; 
+for (i=0; i<4;i++)
+Neuron (x, i);  
+if (learning == 1) 
+{
+int j, d[4]: 
+d[0] = right; 
+d[1] = left; 
+d[2] = forword; 
+d[3) = backword; 
+for (i=0; i<4;i++) 
+  for (j=0;j<4;j++)
+    neo[i].w[j]=neo[i].w[j] + a * (d[i] - neo[i].y) * x[j];
 Counter++; 
-int 
-count; 
-neo[i].w[j]=neo 
-[i] 
-.w[j] 
-+ 
-a 
-* 
-float 
-E-0, 
-El=l, 
-Err; 
+int count; 
+float E=0, El=l, Err; 
 Count=counter; 
-for 
-(i=3; 
-i>=0; 
-i--){ 
-c[i]=count 
-%10+0x30; 
-Count=count/10: 
-84 
-)1nn 
-40 
-TIny 
-
+for (i=3; i>=0; i--){ 
+  c[i]=count%10+0x30; 
+  Count=count/10;
+  lcd_clr(); 
+  lcd_print(c);
+  El=0;  
+  for (i=0;i<4;it+) 
+  {  
+     E1 += pow(d[i]-neo[i].y,2); 
+  }
+  E+=E1;// /4 
+  Err=sqrt(E); 
+  if (Err<0.5){
+     learning=0;
+     lcd_clr();
+     lcd_print("All OK!!!");
+  }
+  else 
+    learning=1;
+}
+}
+else
+  slowdonDelay--;
+if (neo[0].y == 1)
+{
+MOTORR_F1; 
+MOTORR_BO; 
 } 
-else 
-{ 
-{ 
-} 
-lcd 
-clr() 
-; 
-lcd 
-print 
-(c)i 
-El=0; 
-else 
-for 
-(i=0;i<4;it+) 
-{ 
-return 
-0 
-: 
-E+=El; 
-// 
-/4 
-Err-sqrt 
-(E) 
-; 
-if 
-(Err<0.5) 
-else 
-if 
-(neo 
-[0] 
-.y 
-== 
-1) 
-MOTORR 
-F1; 
-MOTORR 
-BO; 
-slowdownDelay--; 
-else 
-if 
-(neo 
-[1] 
-.y 
-== 
-1) 
-MOTORL 
-Fl; 
-MOTORR 
-Fl; 
-MOTORL 
-BO; 
-MOTORR 
-BO; 
-MOTORL 
-Fl; 
-else 
-if 
-(neo 
-[2] 
--y 
-== 
-1) 
-MOTORIL 
-BO; 
-MOTORL 
-Bl; 
-El+-pow 
-(d 
-[i) 
--neo 
-[i].y, 
-2) 
-else 
-if 
-(neo 
-[3] 
--y 
-== 
-1) 
-MOTORR 
-B1; 
-MOTORL 
-FO; 
-MOTORR 
-FO; 
-LED 
-RED 
-ON; 
-learning=0; 
-MOTORL 
-F0; 
-lcd 
-clr() 
-; 
-MOTORR 
-FO; 
-lcd 
-print 
-("All 
-OK! 
-!!"); 
-MOTORL 
-B0; 
-MOTORR 
-BO; 
-learning=1; 
-84 
-1nn 
-41 
-TIny 
+else if (neo[1].y == 1)
+{
+MOTORL_Fl; 
+MOTORR_Fl; 
+MOTORL_BO; 
+MOTORR_BO; 
+}
+else if (neo[2].y == 1) 
+{
+MOTORL_F1;
+MOTORL_BO; 
+}
+else if (neo[3].y == 1) 
+{
+MOTORL_B1;
+MOTORR_B1; 
+MOTORL_FO; 
+MOTORR_FO; 
+LED_RED_ON;
+}
+else
+{
+MOTORL_F0; 
+MOTORR_FO; 
+MOTORL_B0; 
+MOTORR_BO; 
+}
+}
+return 0;
+}
 
-Robot.h 
-#ifndef 
-ROBOT 
-H 
-#define 
-ROBOT 
-H 
-#define 
-LED 
-RED 
-ON 
-LPC 
-GPIO0->>FIOSETL 
-|= 
-(1 
-<< 
-8) 
-#define 
-LED 
-RED 
-OFF 
-LPC 
-GPIO0->FIOCLRL 
-= 
-(1 
-<< 
-8); 
-#define 
-LED 
-BLUE 
-ON 
-LPC 
-GPIO0->FIOSETL 
-|= 
-(1 
-<< 
-9); 
-#define 
-LED 
-BLUE 
-OFF 
-LPC 
-GPIO0->FIOCLRL 
-|= 
-(1 
-<K 
-9); 
-#define 
-MOTORL 
-F1 
-LPC 
-GPIO0->FIOSETL 
-|= 
-(1 
-<< 
-7); 
-#define 
-MOTORL 
-B1 
-LPC 
-GPIO0->FIOSETL 
-|= 
-(1 
-<< 
-6): 
-#define 
-MOTORR 
-F1 
-LPC 
-GPIO0->FIOSETL 
-= 
-(1 
-<< 
-5); 
-#define 
-MOTORR 
-B1 
-LPC 
-GPIO0->FIOSETL 
-|= 
-(1 
-<< 
-4); 
-#define 
-MOTORL 
-FO 
-LPC 
-GPIO0->FIOCLRL 
-|= 
-(1 
-<< 
-7); 
-#define 
-MOTORL 
-BO 
-LPC 
-GPIO0->FIOCLRL 
-|= 
-(1 
-<< 
-6): 
-#define 
-MOTORR 
-FO 
-LPC 
-GPIO0->FIOCLRL 
-|= 
-(1 
-<< 
-5) 
-; 
-#define 
-MOTORR 
-BO 
-LPC 
-GPIO0->FIOCLRL 
-|= 
-(1 
-<< 
-4); 
-#define 
-MOTOR1EN1 
-LPC 
-GPIO2->FIOSETL 
-|= 
-(1 
-<< 
-6) 
-; 
-#define 
-MOTORIENO 
-LPC 
-GPIO2->FIOCLRL 
-|= 
-(1 
-<< 
-6); 
-typedef 
-struct 
-{ 
-float 
-w[4]; 
-int 
-ch; 
-int 
-yi 
+/*Robot.h */
+#ifndef ROBOT _H_
+#define ROBOT _H_
+  
+#define LED_RED_ON LPC_GPIO0->>FIOSETL |= (1 << 8); 
+#define LED_RED_OFF LPC_GPIO0->FIOCLRL |= (1 << 8); 
+#define LED_BLUE_ON LPC_GPIO0->FIOSETL |= (1 << 9); 
+#define LED_BLUE_OFF LPC_GPIO0->FIOCLRL |= (1 << 9);
+  
+#define MOTORL_F1 LPC_GPIO0->FIOSETL |= (1 << 7); 
+#define MOTORL_B1 LPC_GPIO0->FIOSETL |= (1 << 6): 
+#define MOTORR_F1 LPC_GPIO0->FIOSETL |= (1 << 5); 
+#define MOTORR_B1 LPC_GPIO0->FIOSETL |= (1 << 4); 
+#define MOTORL_FO LPC_GPIO0->FIOCLRL |= (1 << 7); 
+#define MOTORL_BO LPC_GPIO0->FIOCLRL |= (1 << 6); 
+#define MOTORR_FO LPC_GPIO0->FIOCLRL |= (1 << 5); 
+#define MOTORR_BO LPC_GPIO0->FIOCLRL |= (1 << 4); 
+#define MOTOR1EN1 LPC_GPIO2->FIOSETL |= (1 << 6); 
+#define MOTOR1ENO LPC_GPIO2->FIOCLRL |= (1 << 6); 
+#define MOTOR2EN1 LPC_GPIO2->FIOSETL |= (1 << 7) ; 
+#define MOTOR2ENO LPC_GPIO2->FIOCLRL |= (1 << 7); 
+
+
+typedef struct {
+float w[4]; 
+int ch; 
+int yi; 
 }neuron; 
-#endif 
-/* 
-ROBOT 
-H*/ 
-LCD.c 
-#ifdef 
-#include 
-"LPC17xx. 
-h" 
-#endi£ 
-USE 
-CMSIS 
-#include 
-"LCD.h" 
-void 
-SysTick 
-Handler 
-(void); 
-void 
-delay 
-us 
-(uint32 
-t); 
-static 
-volatile 
-uint32 
-t 
-usTicks 
-= 
-0; 
-void 
-SysTick 
-Handler 
-(void) 
-{ 
-usTickstt; 
-void 
-delay 
-us 
-(uint32 
-t. 
-us) 
-{ 
-uint32 
-t 
-startTicks; 
-startTicks 
-= 
-usTicks; 
-while 
-( 
-(usTicks 
-startTicks) 
-< 
-us); 
-void 
-delay 
-(unsigned 
-int 
-i) 
-while 
-(i--) 
-; 
-84 
-¬in 
-42 
-TIny 
-L 
-#define 
-MOTOR2EN1 
-LPC 
-GPIO2->FIOSETL 
-|= 
-(1 
-<< 
-7); 
-#define 
-MOTOR2ENO 
-LPC 
-GPIO2->FIOCLRL 
-|= 
-(1 
-<« 
-7); 
+#endif /* ROBOT H*/ 
 
-void 
-lcd 
-clr 
-(void) 
-lcd 
-command 
-(Ox01) 
-; 
-delay 
-us 
-(5000); 
-void 
-lcd 
-init(void) 
-delay 
-us 
-(40000); 
-lcd 
-init 
-write 
-(0x3) 
-: 
-delay 
-us 
-(5000): 
-lcd 
-command 
-(0x30) 
-; 
-delay 
-us 
-(5000); 
-lcd 
-command 
-( 
-0x30) 
-; 
-delay 
-us 
-(5000): 
-lcd 
-command 
-(0x20) 
-; 
-delay 
-us 
-(5000): 
-lcd 
-command 
-(0x28) 
-; 
-delay 
-us 
-(1000) 
-; 
-lcd 
-command 
-(Ox06) 
-; 
-delay_ 
-us 
-(1000 
-); 
-lcd 
-command 
-(0xOF) 
-; 
-delay 
-us 
-(1000) 
-: 
-lcd 
-command 
-(0x01) 
-; 
-delay_ 
-us 
-(5000): 
-void 
-lcd 
-init 
-write 
-(unsigned 
-char 
-a) 
-RSO; 
-LPC 
-GPIO2->FIOCLRO 
-= 
-0xF; 
-LPC 
-GPIO2->FIOSETO 
-= 
-a; 
-EN1; 
-delay 
-us 
-(100): 
-ENO; 
-void 
-lcd 
-write4 
-(unsigned 
-char 
-value) 
-LPC 
-GPIO2->FIOCLRO 
-= 
-0xF; 
-LPC 
-GPIO2->FIOSETO 
-= 
-(value 
-& 
-OxF); 
-EN1; 
-delay 
-us 
-(100) 
-: 
-ENO; 
-void 
-lcd 
-write 
-(unsigned 
-char 
-value) 
-lcd 
-write4 
-(value 
->> 
-4); 
-lcd 
-write4 
-(value) 
-; 
-void 
-lcd 
-comnand 
-(unsigned 
-char 
-value) 
+/*LCD.c */
+
+#ifdef __USE_CMSIS
+#include "LPC17xx.h" 
+#endi£ 
+ 
+#include "LCD.h" 
+
+void SysTick_Handler (void); 
+void delay_us (uint32_t); 
+
+static volatile uint32_t usTicks = 0; 
+
+void SysTick_Handler (void){ 
+usTicks++; }
+
+void delay_us (uint32_t us){ 
+uint32_t startTicks; 
+startTicks = usTicks; 
+while ((usTicks - startTicks) < us); 
+
+void delay (unsigned int i){
+while (i--);
+}
+
+void lcd_clr (void){
+lcd_command (0x01); 
+delay_us (5000); 
+}
+
+void lcd_init(void){
+delay_us (40000); 
+lcd_init_write (0x3); 
+delay_us (5000);
+lcd_command (0x30); 
+delay_us (5000); 
+lcd_command (0x30); 
+delay_us (5000); 
+lcd_command (0x20); 
+delay_us (5000);
+lcd_command (0x28); 
+delay_us (1000); 
+lcd_command (0x06); 
+delay_us (1000); 
+lcd_command (0x0F); 
+delay_us (1000); 
+lcd_command (0x01); 
+delay_us (5000); 
+}
+
+void lcd_init_write(unsigned char a){
 RS0; 
-lcd 
-write 
-(value); 
-void 
-lcd 
-print 
-(char 
-chap[) 
-) 
-int 
-count=0; 
-84¬1nn 
-43 
-TIny 
+LPC_GPIO2->FIOCLR0 = 0xF; 
+LPC GPIO2->FIOSET0 = a; 
+EN1; 
+delay_us (100);
+EN0;
+}
 
-LCD.h 
-while 
-(chap 
-(count] 
-!=*\0') 
+void lcd_write4 (unsigned char value){
+LPC_GPIO2->FIOCLR0 = 0xF; 
+LPC_GPIO2->FIOSET0 = (value & 0xF); 
+EN1; 
+delay_us (100);
+EN0;
+}
+
+void lcd_write (unsigned char value){
+lcd_write4 (value >> 4); 
+lcd_write4 (value);
+}
+
+void lcd_comnand (unsigned char value){
+RS0; 
+lcd_write (value); 
+}
+
+void lcd_print (char chap[]){ 
+int count=0; 
+while (chap[count] !='\0') 
+{
 RS1; 
-lcd 
-write 
-(chap 
-[count 
-]); 
-#ifndef 
-LCD 
-H 
-#define 
-LCD 
-H 
-#define 
-RSO 
-LPC 
-GPIO2->FIOCLRO 
-|= 
-0x10; 
-#define 
-RS1 
-LPC 
-GPIO2->FIOSETO 
-|= 
-0x10; 
-#define 
-ENO 
-LPC 
-GPIO2->FIOCLRO 
-|= 
-0x20; 
-#define 
-EN1 
-LPC 
-GPIO2->FIOSETO 
-|= 
-0x20; 
-void 
-delay 
-(unsigned 
-int) 
-; 
-void 
-lcd 
-init 
-(void): 
-void 
-lcd 
-write4 
-(unsigned 
-char) 
-; 
-vOid 
-lcd 
-write 
-(unsigned 
-char); 
-void 
-lcd 
-init 
-Write 
-(unsigned 
-char): 
-void 
-lcd 
-command 
-(unsigned 
-char) 
-; 
-void 
-lcd 
-print( 
-char 
-Uart.c 
-void 
-lcd 
-cl 
-(void); 
-#endif 
-/* 
-LCD 
-H 
-*/ 
-#include 
-"lpc17xx.h" 
-#include 
-"type.h" 
-#include 
-"uart.h" 
-volatile 
-uint32 
-t. 
-UART3Status; 
-volatile 
-uint8 
-t 
-UART 
-3T×Empty 
-= 
-1; 
-volatile 
-uint8 
-t 
-UART3Buffer 
-[BUFSIZE]: 
-volatile 
-uint32 
-t 
-UART3Count 
-= 
-0; 
-Function 
-Ianc: 
-Descritions: 
-): 
-k* 
-parameters: 
-Returned 
-valuc: 
-UARTO 
-IRQHandler 
-UARTO 
-interrupt 
-handler 
-void 
-UART3 
-IRQHandler 
-(void) 
-uint8 
-t 
-IIRValue, 
-LSRValue; 
-uint 
-8 
-t 
-Dummy 
-= 
-Dumny; 
-None 
-None 
-84 
-Finn 
-44 
-TIny 
+lcd_write (chap[count]); 
+}
+}
 
-IIRValue 
-= 
-LPC 
-UARTO->IIR; 
-IIRValue 
->>= 
-1; 
-IIRValue 
-&= 
-0x07; 
-identificaticn 
-/ 
-if 
-( 
-IIRValue 
-clear 
-} 
-LSRValue 
-= 
-LPC 
-UART0->LSR; 
-if 
-/* 
-Receive 
-Line 
-Status 
-*/ 
-IIR 
-RLS 
-) 
-( 
-LSRValue 
-& 
-(LSR 
-OE|LSR 
-PE|LSR 
-FE|LSR 
-RXFE|LSR 
-BI) 
-) 
-/* 
-There 
-are 
-errors 
-or 
-break 
-interrupt 
-*/ 
-UART3Status 
-= 
-LSRValue 
-; 
-return; 
-buffer. 
-*/ 
-/* 
-Read 
-LSR 
-will 
-clear 
-the 
-interrupt 
-*/ 
-Dummy 
-= 
-LPC 
-UART0->RBR; 
-if 
-( 
-LSRValue 
-& 
-LSR 
-RDR 
-) 
-/* 
-skip 
-pending 
-bit 
-in 
-IIR 
-*/ 
-to 
-see 
-if 
+/*LCD.h */
+
+#ifndef LCD_H_
+#define LCD_H_
+
+#define RS0 LPC_GPIO2->FIOCLR0 |= 0x10; 
+#define RS1 LPC_GPIO2->FIOSET0 |= 0x10; 
+#define EN0 LPC_GPIO2->FIOCLR0 |= 0x20; 
+#define EN1 LPC_GPIO2->FIOSET0 |= 0x20; 
+
+void delay (unsigned int); 
+void lcd_init (void); 
+void lcd_write4 (unsigned char); 
+void lcd_write (unsigned char); 
+void lcd_init_write (unsigned char); 
+void lcd_command (unsigned char) ; 
+void lcd_print (char 
+void lcd_clr (void); 
+
+#endif /* LCD-H- */ 
+
+/*Uart.c */
+
+#include "lpc17xx.h" 
+#include "type.h" 
+#include "uart.h" 
+
+volatile uint32_t UART3Status; 
+volatile uint8_t UART3T×Empty = 1; 
+volatile uint8_t UART3Buffer[BUFSIZE]; 
+volatile uint32_t UART3Count = 0; 
+
+/****************************************************************************************
+********
+**Function name:      UART0_IRQHandler
+**
+**Descritions:        UART0 interrupt handler
+**
+**parameters:         NONE
+**Returned value:     NONE
+*****************************************************************************************
+*********/
+
+void UART3_IRQHandler (void){
+uint8_t IIRValue, LSRValue; 
+uint8_t Dummy = Dummy; 
+IIRValue = LPC_UART0->IIR; 
+IIRValue >>= 1;     /* skip pending bit in IIR */
+IIRValue &= 0x07;   /* check bit 1~3, interrupt identificati0n  */
+if ( IIRValue ==IIR_RLS)   /* Receive Line Status */
+{ 
+LSRValue = LPC_UART0->LSR; 
+if ( LSRValue & (LSR_OE|LSR_PE|LSR_FE|LSR_RXFE|LSR_BI)) 
+{
+/* There are errors or break interrupt */ 
+/* Read LSR will clear the interrupt */ 
+UART3Status = LSRValue; 
+Dummy = LPC_UART0->RBR;    /*Dummy read on RX to clear interrupt, then bail out  */
+return;
+}
+if ( LSRValue & LSR_RDR )  /* Receive Data Ready */
+{
+/* If no error on RLS, normal ready, save into the data buffer.  */
+/* Note: read RBR will clear the interrupt */
+UART3Buffer[UART3Count] = LPC_UART3->RBR;
 UART3Count++; 
-if 
-UART3Count 
-== 
-BUESIZE 
-) 
-UART3Count 
-= 
-0; 
-else 
-if 
-( 
-IIRValue 
-== 
-IIR 
-RDA 
-) 
-/* 
-If 
-no 
-error 
-on 
-RILS, 
-normal 
-ready, 
-save 
-into 
-the 
-data 
-if 
-( 
-UART3Count 
-/* 
-Note: 
-read 
-RBR 
-will 
-clear 
-the 
-interrupt 
-*/ 
-UART3Buffer 
-[UART3Count 
-] 
-= 
-LPC 
-UART3->RBR; 
-UART3Count 
-= 
-0; 
-else 
-if 
-( 
-IIRValue 
-register 
-empty 
-/ 
-/* 
-check 
-bit 
-1~3, 
-interrupt 
-/* 
-Receive 
-Line 
-Status 
-*/ 
-U3THR 
-or 
-not 
-/ 
-7* 
-Receive 
-Data 
-Available 
-*/ 
-UART3Buffer 
-[UART3Count] 
-= 
-LPC 
-UART3->RBR; 
+if (UART3Count == BUESIZE) 
+  UART3Count = 0;  /* buffer overflow */
+}
+}
+else if ( IIRValue == IIR_RDA ) /* Receive Data Available */
+{
+UART3Buffer[UART3Count] = LPC_UART3->RBR; 
 UART3Count++; 
-== 
-BUFSIZE 
-) 
-/* 
-THRE 
-interrupt 
-*/ 
-LSRValue 
-= 
-LPC 
-UART3->LSR; 
-7* 
-Character 
-Time-out 
-indicator 
-*/ 
-UART3Status 
-|= 
-0x100; 
-UART3Tx 
-Empty 
-1; 
-/* 
-Duny 
-read 
-on 
-RX 
-to 
-/* 
-Receive 
-Dat:a 
-Ready 
-*/ 
+if (UART3Count == BUFSIZE) 
+  UART3Count = 0;  /* buffer overflow */
+}
+else if ( IIRValue == IIR_CTI ) /* Character timeout indicator */ 
+  UART3Status |= 0x100;  /*Bit 9 as the CTI error */
+else if ( IIRValue == IIR_THRE )   /* THRE, transmit holding register empty */
+{
+  /*  THRE interrupt */
+  LSRValue = LPC_UART3->LSR;    /* Check status in the LSR to see if valid data in UART3 or not */
+if ( LSRValue & LSR_THRE ) 
+  UART3TxEmpty = 1;
 else 
-if 
-( 
-IIRValue 
-== 
-IIR 
-CTI 
-) 
-/* 
-Character 
-timeout 
-indicator 
-/ 
-interrupt, 
-then 
-bail 
-out 
-*/ 
-if 
-( 
-LSRValue 
-& 
-LSR 
-THRE 
-) 
-/* 
-buffer 
-overflow 
-*/ 
-/* 
-Receive 
-Data 
-Available 
-*/ 
-/* 
-buf 
-fer 
-overflow 
-*/ 
-IIR 
-THRE 
-) 
-/* 
-THRE, 
-transmit 
-holding 
-/* 
-Bit 
-9 
-as 
-the 
-CTI 
-error 
-/ 
-84¬1nn 
-45 
-TINy 
-/* 
-Check 
-status 
-in 
-the 
-LSR 
-valid 
-data 
-in 
-L 
+  UART3TxEmpty = 0;
+}
+}
 
-else 
-Funct 
-ion 
-name: 
-etc. 
-Descriptions 
-: 
-UART3TxEmpty 
-= 
-0; 
-** 
-parameters: 
-+* 
-Returned 
-value: 
-installed 
-to 
-the 
-uint32 
-t 
-Fdiv; 
-uint32 
-t 
-UARTInit(uint32 
-t 
-baudrate 
-) 
-uint32 
-t 
-pclkdiv, 
-pclk; 
-P0.0 
-*/ 
+
+/***************************************************************************************
+**********
+**Function name:        UARTInit
+**
+**Descriptions:         Initialize UART port, setup pin select, clock, parity, stop bits, FIFO, etc.
+**
+**parameters:           UARRT baudrate
+**Returned value:       true 
+installed to the VIC table
+**
+****************************************************************************************
+**********/
+
+uint32_t UARTInit(uint32_t baudrate) {
+uint32_t Fdiv;
+uint32_t pclkdiv, pclk; 
+
+  LPC_PINCON->PINSEL0 &= ~0x0000000F;
+  LPC_PINCON->PINSEL0 |= 0x0000000A; /* Enable RxD1 PO.1, TxDi P0.0 */ 
+  /* By default, the PCLKSELX value is zero, thus, the PCLK for all the peripherals is 1/4 of the SystemFrequency. */ 
+  /* Bit 8,9 are for UART3 */
+  pclkdiv = LPC_SC->PCLKSEL0 >> 8) & 0x03; 
+  switch ( pclkdiv ) 
+    {
+      case 0x00: 
+      default: 
+        pclk = SystemFrequency/4; 
+        break; 
+      case 0x01: 
+        pclk = SystemFrequency; 
+        break; 
+      case 0x02: 
+        pclk = SystemFrequency/2; 
+        break; 
+      case 0x03: 
+        pclk = SystemFrequency/8; 
+        break; 
+    }
+  LPC_UART3->LCR = 0x83; /* 8 bits, no Parity, 1 Stop bit */
+  Fdiv = ( pclk / 16 ) / baudrate ; /*baud rate */ 
+  LPC_UART3->DLM = Fdiv / 256; 
+  LPC_UART3->DLL = Fdiv % 256; 
+  LPC_UART3->LCR = 0x03; /* DLAB = 0 */ 
+  LPC_UART3->FCR = 0x07; /* Enable and reset TX and RX FIFO. */
+  NVIC_EnableIRQ(UART3_IRQn); 
+  LPC_UART3->IER = IER_RBR | IER_THRE | IER_RLS; /* Enable UART3 interrupt */ 
+  return (0); 
+}
+  
+/*Uart.h */
+  
+#ifndef __UART_H 
+#define __UART_H 
+
+#define IER_RBR 0x01
+#define IER_THRE 0x02 
+#define IER_RLS 0x04
+
+#define IIR_PEND 0x01 
+#define IIR_RLS 0x03
+#define IIR_RDA 0x02
+#define IIR_CTI 0x06
+#define IIR_THRE 0x01
+
+#define LSR_RDR 0x01
+#define LSR_OE 0x02
+#define LSR_PE 0x04
+#define LSR_FE 0x08
+#define LSR_BI 0x10
+#define LSR_THRE 0x20 
+#define LSR_TEMT 0x40 
+#define LSR_RXFE 0x80 
+  
+#define BUESIZE 0x40 
+
+uint32_t UARTInit( uint32_t Baudrate ); 
+void UART3_IRQHandler( void ) ; 
+#endif /* end __UART_H */ 
+
+
+/* Remote*/  
+
+/*Main.c */
+  
+#include <cr_section_macros.h> 
+#include <NXP/crp.h> 
+// Variable to store CRP value in. Will be placed automatically 
+// by the linker when "Enable Code Read Protect" selected. 
+// See crp.h header for more information 
+__CRP const unsigned int CRP_WORD = CRP_NO_CRP; 
+
+#include "lpc17xx. h" 
+#include "type.h" 
+#include "uart.h" 
+
+extern volatile uint32_t UART3Count; 
+extern volatile uint8_t UART3Buffer [BUFSIZE]; 
+
+int main (void) {
+/* SystemClockUpdate() updates the SystemFrequency variable */ 
+SystemClockUpdate () ; 
+LPC_PINCON->PINSEL4 &=~ (0xF) ; 
+LPC_GPIO2->FIODIR0 &=~(0xF); 
+
+UARTInit (192000); /* baud rate setting */
+
+while (1) 
+{ /* Loop forever */
+if ( UART3Count != 0 ) 
 { 
-UARTInit 
-LPC 
-PINCON->PINSEL0 
-&= 
-~0x0000000F; 
-Initialize 
-UART 
-port, 
-setup 
-pin 
-select, 
-clock, 
-parity, 
-stop 
-bits, 
-FIFO, 
-LPC 
-PINCON->PINSELO 
-|= 
-0x0000000A; 
-/* 
-Enable 
-RxD1 
-PO.1, 
-TxDi 
-case 
-Ox00: 
-/* 
-By 
-de 
-fault, 
-the 
-PCLKSELX 
-value 
-is 
-zero, 
-thus, 
-the 
-PCLK 
-for 
-all 
-the 
-peripherals 
-is 
-1/4 
-of 
-the 
-SystemFrequency. 
-*/ 
-7* 
-Bit 
-8,9 
-are 
-for 
-UART3 
-*/ 
-default: 
-pclkdiv 
-= 
-(PC 
-SC->PCLKSELO 
->> 
-8) 
-& 
-0x03; 
-switch 
-( 
-pclkdiv 
-) 
-case 
-0x01: 
-UART 
-baudrate 
-true 
-case 
-Ox02: 
-pclk 
-= 
-SystemFrequency/4; 
-break; 
-VIC 
-table 
-pclk 
-= 
-SystemFrequency; 
-break; 
-case 
-Ox03: 
-pclk 
-= 
-SystemFrequencyl2; 
-break 
-; 
-LPC 
-UART3->LCR 
-= 
-0x83; 
-pclk 
-= 
-SystemFrequency/8; 
-break; 
-LPC 
-UART3->DLM 
-= 
-Fdiv 
-/ 
-256; 
-LPC 
-UART3->DLL 
-= 
-Fdiv 
-% 
-256; 
-LPC 
-UART3->LCR 
-= 
-0x03; 
-Fdiv 
-= 
-( 
-pclk 
-/ 
-16 
-) 
-/ 
-baudrate 
-; 
-/*baud 
-rate 
-*/ 
-7* 
-8 
-bits, 
-no 
-Parity, 
-1 
-Stop 
-bit 
-/* 
-DLAB 
-= 
-0 
-*} 
-84 
-Jnn 
-46 
-TIny 
-L 
+if (LPC_GPIO2->FIOPIN0 & (1 << 0)>>0) 
+{
+  LPC_UART3->IER = IER_THRE| IER_RLS;
+  /* Disable RBR */ 
+   UARTSend( 'L' ); 
+   UART3Count = 0; 
+   LED_ON;
+   LPC_UART3->IER = IER_THRE | IER_RLS | IER_RBR; /*  Re-enable RBR */ 
+}
+else if (LPC GPIO2->FIOPIN0 & (1 << 1) >>1) 
+{
+LPC_UART3->IER = IER_THRE | IER_RLS; /* Disable RBR */
+UARTSend( 'F' ) ;
+UART3Count = 0; 
+LED_ON; 
+LPC_UART3->IER = IER_THRE | IER_RLS | IER_RBR; /*  Re-enable RBR */
+}
+else if (LPC GPIO2->FIOPIN0 & (1 << 2) >>2) 
+{
+LPC_UART3->IER = IER_THRE | IER_RLS ; /* Disable RBR */ 
+UARTSend( 'R' ); 
+UART3Count = 0; 
+LED_ON;
+LPC_UART3->IER = IER_THRE | IER_RLS | IER_RBR; /*Re-enable RBR */  
+else if (LPC_GPIO2->FIOPIN0 & (1 << 3) >>3) 
+{
+LPC_UART3->IER =IER_THRE | IER_RLS;  /* Disable RBR */ 
+UARTSend ( 'B'); 
+UART3Count = 0; 
+LED_ON;
+LPC_UART3->IER = IER_THRE | IER_RLS | IER_RBR; /*Re-enable RBR */ 
+}
+else 
+  LED_OFF;
+}
+}
+return 0; 
+}
 
-LPC 
-UART3->FCR 
-= 
-0x07; 
-FIFO. 
-*/ 
-NVIC 
-EnableIRQ(UART3 
-IRQn) 
-; 
-} 
-LPC 
-UART3->IER 
-= 
-IER 
-RBR 
-| 
-IER 
-THRE 
-| 
-IER 
-RLS; 
-/* 
-Enable 
-UART3 
-interrupt 
-*/ 
-return 
-(0); 
-Uart.h 
-#ifndef 
-UART 
-H 
-#define 
-UART 
-H 
-#define 
-IER 
-RBR 
-#define 
-IER 
-THRE 
-Ox02 
-#define 
-IER 
-RLS 
-#define 
-IIR 
-PEND 
-Ox01 
-#define 
-IIR 
-RLS 
-#define 
-IIR 
-RDA 
-#define 
-IIR 
-CTI 
-#define 
-IIR 
-THRE 
-#define 
-LSR 
-RDR 
-#define 
-LSR 
-OE 
-#define 
-LSR 
-PE 
-#define 
-LSR 
-FE 
-#define 
-LSR 
-BI 
-#define 
-LSR 
-THRE 
-Ox01 
-#define 
-BUESIZE 
-Ox20 
-#define 
-LSR 
-TEMT 
-#define 
-LSR 
-RXEE 
-Ox80 
-Ox40 
-Ox01 
-Ox04 
-Ox03 
-Ox02 
-0x06 
-0x01 
-Ox02 
-Ox04 
-Ox08 
-Ox10 
-Ox40 
-/* 
-Enable 
-and 
-reset 
-T8 
-and 
-RX 
-uint32 
-t 
-UARTInit( 
-uint32 
-t 
-Baudrate 
-); 
-void 
-UART3 
-IRQHandler( 
-void 
-) 
-; 
-#endi£ 
-/* 
-end 
-UART 
-H 
-*/ 
-84¬1n0 
-47 
-TIny 
+/*Uart.c */
+#include "lpc17xx.h" 
+#include "type.h" 
+#include "uart.h" 
 
-Main.c 
-#include 
-<cr 
-section 
-macros 
-.h> 
-#include 
-<NXP/crp.h> 
-1/ 
-Variable 
-to 
-store 
-CRP 
-value 
-in. 
-Will 
-be 
-placed 
-automatically 
-i/ 
-by 
-the 
-linker 
-when 
-"Enable 
-Code 
-Read 
-Protect" 
-selected. 
-7/ 
-See 
-crp.h 
-header 
-for 
-more 
-information 
-CRP 
-const 
-unsigned 
-int 
-CRP 
-WORD 
-= 
-CRP 
-NO 
-CRP; 
-#include 
-"lpc17xx. 
-h" 
-#include 
-"type.h" 
-#include 
-"uart.h" 
-extern 
-volatile 
-uint32 
-t 
-UART3Count; 
-extern 
-volatile 
-uint8 
-t 
-UART3Buffer 
-[BUFSI 
-ZE]; 
-int 
-main 
-(void) 
-/* 
-SystemCl 
-ockUpdate() 
-updates 
-the 
-SystemFrequency 
-variable 
-+/ 
-SystemClockUpdate 
-() 
-; 
-LPC 
-PINCON->PINSEIL4 
-&=~ 
-(0xF) 
-; 
-LPC 
-GPIO2->FIODIR0 
-&=~(OxF); 
-UARTInit 
-(192000) 
-; 
-while 
-(1) 
-if 
-( 
-UART3Count 
-!= 
-0 
-) 
+volatile uint32_t UART3Status; 
+volatile uint8_t UART3TxEmpty = 1; 
+volatile uint8_t UART3Buffer [BUFSIZE]; 
+volatile uint32_t UART3Count = 0;
+
+/**************************************************************************** 
+******* 
+**Function name:           UART3_IROHandler
+**
+**Descriptions:            UART3 interrupt handler
+**
+**pararneters:             NONE
+**Returrned value:         NONE
+*****************************************************************************
+******/
+ 
+ 
+ 
+ 
+void UART3_IRQHandler (void) {
+uint8_t IIRValue, LSRValue; 
+uint8_t Dummy = Dummy;
+
+IIRValue = LPC_UART0->IIR; 
+IIRValue >>= 1; /* skip pending bit in IIR */ 
+IIRValue &= 0x07; /* check bit 1~3, interrupt identification */
+if ( IIRValue == IIR_RLS )  /* Receive Line Status */
+{
+LSRValue = LPC_UART3->LSR; 
+/* Receive Line Status */ 
+if ( LSRValue & (LSR_OE|LSR_PE|LSR_FE| LSR_RXFE| LSR_BI)) 
 { 
-if 
-(LPC 
-GPIO2->FIOPIN0 
-& 
-(1 
-<< 
-0)>>0) 
-/* 
-Disable 
-RBR 
-*/ 
-Re-enable 
-RBR 
-*/ 
-/* 
-baud 
-rate 
-setting 
-*/ 
-Re-enable 
-RBR 
-*/ 
-/* 
-Loop 
-forever 
-*/ 
-) 
-LPC 
-UART3->IER 
-= 
-IER 
-THRE| 
-IER 
-RLS; 
-UARTSend( 
-'L' 
-): 
-UART3Count 
-= 
-0; 
-LED 
-ON; 
-/* 
-Disable 
-RBR 
-/ 
-else 
-if 
-(LPC 
-GPIO2->FIOPINO 
-& 
-(1 
-<< 
-1) 
->>1) 
-LPC_UART3->IER 
-= 
-IER_THRE 
-| 
-IER 
-RLS 
-| 
-IER 
-RBR; 
-Ubun 
-NNN 
-5.9 
-LPC 
-UART3->IER 
-= 
-IER 
-THRE 
-IER 
-RLS; 
-UARTSend( 
-'F 
-) 
-UART3Count: 
-= 
-0; 
-LED 
-ON; 
-LPC 
-UART3->IER 
-= 
-IER 
-THRE 
-/* 
-Disable 
-RBR 
-/ 
-else 
-i£ 
-(LPC 
-GPIO2->FIOPINO 
-& 
-(1 
-<< 
-2) 
->>2) 
-LPC 
-UART3->IER 
-= 
-IER 
-THRE 
-IER 
-RLS 
-; 
-UARTSend( 
-'R' 
-); 
-UART3Count 
-= 
-0; 
-IER 
-RLS 
-| 
-IER 
-RBR; 
-84 
-F1n 
-49 
-TIny 
-
-Re-enable 
-RBR 
-*/ 
-} 
-Re-enable 
-RBR 
-*/ 
-return 
-0; 
-Uart.c 
-else 
-if 
-(LPC 
-GPIO2->FIOPINO 
-& 
-(1 
-<< 
-3) 
->>3) 
-/* 
-Disable 
-RER 
-*/ 
-else 
-#include 
-"uart.h" 
-/**** 
-*** 
-* 
-* 
-* 
-LED 
-ON; 
-LPC 
-UART3->IER 
-= 
-IER 
-THRE 
-| 
-IER 
-RLS 
-| 
-IER 
-RBR; 
-* 
-Function 
-name: 
-#include 
-"lpc17xx.h" 
-#include 
-"type.h" 
-Descriptions: 
-pararneters: 
-Returrned 
-value: 
-LPC 
-UART3->IER 
--
-IER 
-THRE 
-| 
-IER 
-RLS; 
-volatile 
-uint32 
-t 
-UART3Status; 
-UARTSend 
-( 
-'B'); 
-UART3Count 
-= 
-0; 
-LED 
-ON; 
-volatile 
-uint8 
-t 
-UART3TxEmpty 
-= 
-1; 
-volatile 
-uint8 
-t 
-UART3Buffer 
-[BUFSIZE]; 
-volatile 
-uint32 
-t 
-UART3Count 
-= 
-0; 
-if 
-LPC 
-_UART3->IER 
--
-IER 
-THRE 
-| 
-IER 
-RLS 
-| 
-IER 
-RBR; 
-LED 
-OFF; 
-IIRValue 
->>= 
-1; 
-IIRValue 
-&= 
-0x07; 
-ident 
-ification 
-*/ 
-UART3 
-IROHandler 
-void 
-UART3 
-IRQHandler 
-(void) 
-UART3 
-interr 
-upt 
-handler 
-uint8 
-t 
-IIRValue, 
-LSRValue; 
-uint8t 
-Dummy 
-= 
-Dummy; 
-IIRValue 
-= 
-LPC 
-UARTO->IIR; 
-( 
-IIRValue 
-== 
-IIR 
-RLS 
-) 
-None 
-None 
-/* 
-skip 
-pending 
-bit 
-in 
-IIR/ 
-/* 
-check 
-bit 
-1~3, 
-interrupt 
-LSRValue 
-= 
-LPC 
-UART3->LSR; 
-/* 
-Receive 
-Line 
-St.atus 
-*/ 
-84 
-n1nn 
-50 
-TIny 
-
-clear 
-/* 
-Receive 
-Line 
-Status 
-*/ 
-if 
-( 
-LSRValue 
-& 
-(LSR 
-OE|LSR 
-PE|LSR 
-FE| 
-LSR 
-RXFE| 
-LSR 
-BI)) 
-{ 
-/* 
-There 
-are 
-errors 
-or 
-break 
-interrupt 
-*/ 
-/* 
-Read 
-LSR 
-will 
-clear 
-the 
-interrupt 
-*/ 
-UART3Status 
-= 
-LSRValue 
-; 
-Dummy 
-= 
-LPC 
-UART3->RBR; 
-if 
-( 
-LSRValue 
-& 
-LSR 
-RDR) 
-buffer. 
-*/ 
-return; 
-{ 
-to 
-see 
-if 
-/* 
-If 
-no 
-error 
-on 
-RIS, 
-normal 
-ready, 
-save 
-into 
-the 
-data 
+/* There are errors or break interrupt */ 
+/* Read LSR will clear the interrupt */ 
+UART3Status = LSRValue; 
+Dummy = LPC_UART3->RBR;  /* Dummy read on RX to clear interrupt, then bail out */
+return;
+}
+if ( LSRValue & LSR_RDR)  /* Receive Data Ready  */
+{
+/* If no error on RLS, normal ready, save into the data buffer. */ 
+/* Note: read RBR will clear the interrupt */
+UART3Buffer [UART3Count] = LPC_UART0->RBR;
 UART3Countt+; 
-else 
-if 
-( 
-IIRValue 
-== 
-IIR 
-RDA 
-) 
-if 
-( 
-UART3Count 
-/* 
-Note: 
-read 
-RBR 
-will 
-clear 
-the 
-interrupt 
-*/ 
-UART3Buffer 
-[UART3Count] 
-= 
-LPC 
-UARTO->RBR; 
-UART3Count 
-= 
-0; 
-if 
-( 
-UART3Count 
-else 
-if 
-( 
-IIRValue 
-UART3Count 
-= 
-0; 
-else 
-/* 
-Receive 
-Data 
-Available 
-*/ 
-UART3Buffer 
-[UART3Count] 
-= 
-LPC 
-UART3->RBR; 
-UART3Count 
-++; 
-BUFSIZE 
-) 
-UOTHP 
-or 
-not 
-*/ 
-/* 
-THRE 
-interrupt 
-/ 
-LSRValue 
-= 
-LPC 
-UART3->LSR; 
-BUFSI 
-ZE 
-) 
-/* 
-Character 
-Time-out 
-indicator 
-*/ 
-UART3Status 
-|= 
-0x100; 
-UART3TxEmpty 
-= 
-1; 
-/* 
-Durnmy 
-read 
-on 
-RX 
-to 
-/* 
-Receive 
-Data 
-Ready 
-*/ 
-if 
-( 
-LSRValue 
-& 
-LSR 
-THRE 
-) 
-UART3TxEmpty 
-= 
-0; 
-interrupt, 
-then 
-bail 
-out 
-*/ 
-else 
-if 
-( 
-IIRValue 
-== 
-IIR 
-THRE 
-) 
-/* 
-THRE, 
-t:ansmit 
-holding 
-register 
-empty 
-*/ 
-/* 
-buffer 
-overfloW 
-*/ 
-/* 
-Receive 
-Data 
-Available 
-*/ 
-/* 
-buffer 
-overflow 
-*/ 
-IIR 
-CTI 
-) 
-/* 
-Character 
-timeout 
-indicator 
-*/ 
-/* 
-Bit 
-9 
-as 
-the 
-CTI 
-error 
-*/ 
-84 
-¬1nn 
-51 
-TIny 
-/* 
-Check 
-status 
-in 
-the 
-LSR 
-valid 
-data 
-in 
+if (UART3Count == BUFSIZE )
+  UART3Count = 0; /* buffer overfloW */
+}
+else if ( IIRValue == IIR_CTI ) /* Character Time-out indicator */
+{
+/* Character Time-out indicator */
+UART3Status |= 0x100; /* Bit 9 as the CTI error */ 
+}
+else if ( IIRValue == IIR_THRE ) /* THRE, t:ansmit holding register empty */  
+{
+/* THRE interrupt */ 
+LSRValue = LPC_UART3->LSR; /* Check status in the LSR to see if valid data in U0THR or not */
+if ( LSRValue & LSR_THRE )
+{
+UART3TxEmpty = 1;
+}
+else
+{
+YART3txEmpty = 0;
+}
+}
+}
 
-Function 
-name: 
-Descriptions: 
-etc. 
-parameters: 
-** 
-Returned 
-value: 
-insta1led 
-to 
-the 
-uint32 
-t 
-Fdiv; 
-uint32 
-t 
-pclkdiv, 
-pclk; 
-uint32t 
-UARTInit( 
-uint32 
-t 
-baudrate 
-) 
-P0.0 
-/ 
-LPC 
-LPC 
-PINCON->PINSELO 
-&= 
-~0x0000000F; 
-LPC 
-PINCON->PINSELO 
-|= 
-0x0000000A; 
-7* 
-Enable 
-RxD1 
-PO.l, 
-TzD1 
-case 
-0x00: 
-UARTInit 
-/* 
-By 
-de 
-fault, 
-the 
-PCLKSELX 
-value 
-is 
-zero, 
-thus, 
-the 
-PCLK 
-for 
-all 
-the 
-peripherals 
-is 
-1/4 
-of 
-the 
-SystemFrequency. 
-*/ 
-default: 
-Initialize 
-UART 
-port, 
-setup 
-pin 
-select, 
-clock, 
-parity, 
-stop 
-bits, 
-FI 
-FO, 
-/* 
-Bit 
-8,9 
-are 
-for 
-UART1 
-*/ 
-pclkdiv 
-= 
-(LPC 
-SC->PCLKSELO 
->> 
-8) 
-& 
-Ox03; 
-switch 
-( 
-pclkdiv 
-) 
-break 
-; 
-case 
-Ox01: 
-UART 
-baudrate 
-true 
-case 
-Ox02: 
-pclk 
-= 
-SystemFrequency/4; 
-break; 
-pclk 
-= 
-SystemFrequency; 
-break; 
-case 
-0x03: 
-VIC 
-table 
-pclk 
-= 
-SystemFrequency 
-/2; 
-LPC 
-UART3->LCR 
-= 
-0x83; 
-pclk 
-= 
-System 
-Frequency/8; 
-break 
-; 
-return 
-(TRUE) 
-; 
-Fdiv 
-= 
-( 
-pclk 
-/ 
-16 
-) 
-/ 
-baudrate 
-i 
-/*baud 
-rate 
-*/ 
-LPC 
-UART3->DLM 
-= 
-Fdiv 
-/ 
-256; 
-UART3-> 
-DLL 
-= 
-Fdiv 
-% 
-256; 
-LPC 
-UART3->LCR 
-= 
-0x03; 
-LPC 
-UART3->FCR 
-= 
-0x07; 
-FIFO. 
-*/ 
-NVIC 
-EnableI 
-RQ 
-( 
-UART3 
-IRQn) 
-; 
-/* 
-ß 
-bits, 
-no 
-Parity, 
-1 
-Stop 
-bit 
-/* 
-DLAB 
-= 
-0 
-*/ 
-/ 
-Epable 
-and 
-resett 
-TX 
-and 
-RX 
-LPC 
-UART3->IER 
-= 
-IER 
-RBR 
-| 
-IER 
-THRE 
-| 
-IER 
-RLS; 
-interrupt 
-*/ 
-84 
-n1nn 
-52 
-Tiny 
-/* 
-Enakle 
-UART3 
+/***********************************************************************
+********
+**Function name:       UARTInit 
+**
+**Descriptions:        Initialize UART port, setup pin select, clock, parity, stop bits, FIFO, etc. 
+**
+**parameters: 
+** Returned value: 
+insta1led to the 
+**
+**
+*************************************************************************
+********/
 
-+ 
-Function 
-name: 
-Descriptions: 
-{ 
-parameters: 
-Returned 
-value: 
-void 
-UARTSend( 
-uint 
-8 
-t 
-BufferPtr 
-) 
-out 
-*/ 
-return; 
-Uart.h 
-#ifndef 
-UART 
-H 
-#define 
-UART 
-H 
-/* 
-THRE 
-status, 
-contain 
-valid 
-data 
-*/ 
-while 
-(! 
-(UART3TxEmpty 
-& 
-0x01) 
-): 
-LPC 
-UART3->THR 
-= 
-BufferPtr 
-; 
-UART3TxEmpty 
-= 
-0; 
-#define 
-IER 
-RBR 
-#define 
-IER 
-THRE 
-Ox02 
-#define 
-IER 
-RLS 
-#define 
-IIR 
-PEND 
-Ox01 
-#define 
-IIR 
-RLS 
-#define 
-IIR 
-RDA 
-#define 
-IIR 
-CTI 
-#define 
-IIR 
-THRE 
-#define 
-LSR 
-RDR 
-#define 
-LSR 
-OE 
-#define 
-LSR 
-PE 
-#define 
-LSR 
-FE 
-#define 
-LSR 
-BI 
-#define 
-LSR 
-THRE 
-#define 
-LSR 
-TEMT 
-#define 
-LSR 
-RXFE 
-#define 
-BUFSI 
-ZE 
-Ox01 
-Ox20 
-UARTSend 
-Ox40 
-Send 
-data 
-to 
-the 
-UART 
-3 
-port 
-based 
-0x80 
-Ox01 
-Ox04 
-Ox03 
-Ox02 
-Ox06 
-Ox01 
-Ox02 
-Ox04 
-Ox08 
-0x10 
-buffer 
-None 
-Ox40 
-/* 
-not 
-empty 
-in 
-the 
-THR 
-until 
-it 
-shifts 
-#define 
-LED 
-ON 
-LPC 
-GPIO2 
-->FIOSETO 
-|=0x10; 
-#define 
-LED 
-OFF 
-LPC 
-GPIO2->FIOCLR0|=0x10; 
-uint32 
-t 
-UARIInit( 
-uint32 
-t 
-Baudrate 
-); 
-void 
-UARTO 
-IRQHandler( 
-void 
-); 
-#endif 
-/* 
-end 
-UART 
-H 
-/ 
-void 
-UART1 
-IRQHandler( 
-void 
-); 
-void 
-UARTSend 
-( 
-uint8 
-t 
-BufferPtr 
-); 
-84¬n 
-53 
-TIOy 
 
+uint32_t UARTInit( 
+uint32_t Fdiv; 
+uint32_t pclkdiv, pclk; 
+
+LPC_PINCON->PINSEL0 &= ~0x0000000F; 
+LPC_PINCON->PINSEL0 |= 0x0000000A; /* Enable RxD1 P0.l, TxD1 P0.0 */ 
+
+/* By default, the PCLKSELx value is zero, thus, the PCLK for all the peripherals is 1/4 of the SystemFrequency. */
+/* Bit 8,9 are for UART1 */ 
+pclkdiv = (LPC SC->PCLKSEL0 >> 8) & 0x03;
+switch ( pclkdiv ) 
+{
+case 0x00: 
+  default: 
+    pclk = SystemFrequency/4; 
+    break; 
+case 0x01: 
+     pclk = SystemFrequency; 
+     break;
+case 0x02: 
+  pclk = SystemFrequency/2; 
+  break; 
+case 0x03:
+  pclk = SystemFrequency/8; 
+  break;
+}
+
+LPC_UART3->LCR = 0x83; /* ß bits, no Parity, 1 Stop bit */
+Fdiv = ( pclk / 16 ) / baudrate ;   /*baud rate */
+LPC_UART3->DLM = Fdiv / 256; 
+LPC_UART3-> DLL = Fdiv % 256; 
+LPC_UART3->LCR = 0x03; /* DLAB = 0 */
+LPC_UART3->FCR = 0x07; /*Enable and reset TX and RX FIFO. */
+
+NVIC_EnableIRQ( UART3_IRQn);
+
+LPC_UART3->IER = IER_RBR | IER_THRE | IER_RLS;  /* Enable UART3 interrupt */ 
+return (TRUE);
+}
+
+/****************************************************************************
+********
+**Function name:         UARTSend
+**
+**Descriptions:          Send data to the UART 3 port based
+**
+**parameters:            buffer
+**Returned value:        None
+**
+*****************************************************************************
+********/
+
+void UARTSend( uint8_t BufferPtr )
+{
+/* THRE status, contain valid data */
+while (! (UART3TxEmpty & 0x01) ); 
+LPC_UART3->THR = BufferPtr; 
+UART3TxEmpty = 0;  /* not empty in the THR until it shifts out  */ 
+ return; 
+}
+
+
+/*Uart.h */
+
+#ifndef __UART_H 
+#define __UART_H 
+ 
+ 
+#define IER_RBR 0x01 
+#define IER_THRE 0x02 
+#define IER_RLS 0x04
+
+#define IIR_PEND 0x01 
+#define IIR_RLS 0x03
+#define IIR_RDA 0x02
+#define IIR_CTI 0x06
+#define IIR_THRE 0x01
+
+#define LSR_RDR 0x01
+#define LSR_OE 0x02
+#define LSR_PE 0x04
+#define LSR_FE 0x08
+#define LSR_BI 0x10
+#define LSR_THRE 0x20
+#define LSR_TEMT 0x40
+#define LSR_RXFE 0x80
+
+#define BUFSIZE 0x40
+
+#define LED_ON LPC_GPIO2 ->FIOSET0 |=0x10; 
+#define LED_OFF LPC_GPIO2->FIOCLR0|=0x10; 
+
+uint32 _t UARIInit( uint32_t Baudrate ); 
+void UART0_IRQHandler( void ); 
+void UART1_IRQHandler( void ); 
+void UARTSend ( uint8_t BufferPtr ); 
+#endif /* end __UART_H */ 
